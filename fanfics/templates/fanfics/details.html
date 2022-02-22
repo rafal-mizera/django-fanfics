@@ -1,0 +1,112 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ publication.title }}{% endblock %}
+
+{% block content %}
+<div class="container-fluid p-3 my-3 border">
+    <h1 class="text-center font-weight-bolder">{{ publication.title }}</h1>
+        <p class="date">Opublikowany {{ publication.created }} przez
+            <a class="badge badge-pill badge-info" href="{% url "fanfics:publications_by_user" name=publication.user  %}"> {{ publication.user }} </a>
+        </p>
+
+</div>
+
+{% with total_likes=publication.users_like.count users_like=publication.users_like.all %}
+            <span class="badge badge-info">
+                <span class="count">
+                    <span class="badge badge-info">{{ total_likes }}   </span> polubień
+                </span>
+            </span>
+            <a href="#" data-id="{{ publication.id }}" data-action="{% if request.user in users_like %}un{% endif %}like" class="btn btn-primary">
+                {% if request.user not in users_like %}
+                    Lubię
+                {% else %}
+                    Nie lubię
+                {% endif %}
+            </a>
+
+
+{% endwith %}
+
+<div class="container-fluid p-3 my-3 border">
+    <h2>W skrócie</h2>
+    <p></p>
+    <span class="font-italic">   {{ publication.summary|linebreaks}} </span>
+</div>
+<div class="container-fluid p-3 my-3 border">
+    {{ publication.content|linebreaks}}
+</div>
+<div class="container-fluid p-3 my-3 border">
+    <h2>Podobne</h2>
+    {% for post in similar_publications %}
+        <p><a href="{{ publication.get_absolute_url }}">{{ post.title }}</a></p>
+    {% empty %}
+        Nie ma podobnych opowiadań.
+    {% endfor %}
+</div>
+<div class="container-fluid p-3 my-3 border">
+        {% with comments.count as total_comments %}
+            <h3>
+                {{ total_comments }} komentarz{{ total_comments|pluralize:"y" }}
+            </h3>
+        {% endwith %}
+</div>
+<div class="container-fluid p-3 my-3 border">
+    {% for comment in comments %}
+            <p>
+                Komentarz {{ forloop.counter }} dodany przez {{ comment.user.username }}
+                {{ comment.created }}
+            </p>
+            {{ comment.body|linebreaks }}
+
+</div>
+        {% empty %}
+            <p>Nie ma jeszcze żadnych komentarzy.</p>
+
+    {% endfor %}
+    {% if request.user.is_authenticated %}
+        {% if new_comment %}
+            <h3>Twój komentarz został dodany.</h3>
+        {% else %}
+    <div class="container-fluid p-3 my-3 border">
+                <form action="." method="post">
+                    {{ comment_form.as_p }}
+                    {% csrf_token %}
+                    <p><input type="submit" class="btn btn-primary" value="Dodaj komentarz"></p>
+                </form>
+    </div>
+        {% endif %}
+    {% endif %}
+
+
+{% endblock %}
+
+{% block domready %}
+
+    $('a.btn').click(function(e){
+    e.preventDefault();
+    $.post('{% url "fanfics:publication_like" %}',
+      {
+        id: $(this).data('id'),
+        action: $(this).data('action')
+      },
+      function(data){
+        if (data['status'] == 'ok')
+        {
+          var previous_action = $('a.btn').data('action');
+
+          $('a.btn').data('action', previous_action == 'like' ?
+          'unlike' : 'like');
+
+          $('a.btn').text(previous_action == 'like' ? 'Nie lubię' :
+          'Lubię');
+
+          var previous_likes = parseInt($('span.count .badge-info').text());
+          $('span.count .badge-info').text(previous_action == 'like' ?
+          previous_likes + 1 : previous_likes - 1);
+
+        }
+      }
+    );
+  });
+{% endblock %}

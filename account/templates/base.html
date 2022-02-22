@@ -1,0 +1,89 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}{% endblock %}</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-cookie@2.2.1/src/js.cookie.min.js"></script>
+
+
+</head>
+<body style="background-image: url({% static 'fanfics/abstract-luxury-blur-grey-color-gradient-used-as-background-studio-wall-display-your-products.jpg' %}); background-size: cover;">
+
+    <nav class="navbar bg-dark navbar-expand-md navbar-dark">
+
+  <!-- Brand -->
+        <ul class="navbar-nav">
+            <a class="navbar-brand font-weight-bolder" href="{% url "fanfics:home" %}">Fanfics</a>
+            <li>
+                <a class="navbar-brand" href="{% url "fanfics:best_publications" %}">Najlepiej oceniane</a>
+            </li>
+            <li>
+                <a class="navbar-brand " href="{% url "fanfics:publications" %}">Najnowsze</a>
+            </li>
+
+        {% if request.user.is_authenticated %}
+
+            <li>
+                <a class="nav-link" href="{% url "edit" %}">Edytuj profil</a>
+            </li>
+            <li>
+                <a class="nav-link" href="{% url "profile" %}">Twoje publikacje</a>
+            </li>
+            <li>
+                <a class="nav-link" href="{% url "fanfics:new_publication" %}">Dodaj</a>
+            </li>
+            <li>
+                <a class="nav-link" href="{% url "logout" %}">Wyloguj</a>
+            </li>
+
+        </ul>
+    </nav>
+<br>
+
+
+      {% else %}
+
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" href="{% url "login" %}">Zaloguj</a>
+            </li>
+        </ul>
+    </nav>
+</br>
+
+          {% endif %}
+
+        {% block content %}
+        {% endblock %}
+
+    <footer><div class="jumbotron jumbotron-fluid mb-0" style="background-image: url({% static 'fanfics/2106.w026.n002.474B.p1.474.jpg' %}); background-size: cover; min-height: 70px;">
+        <p class="text-right text-white padding-right" style="padding-right: 50px"><small>&copy; Copyright 2021, Rafał Mizera</small> </p>
+    </div>
+    </footer>
+
+  <script>
+    var csrftoken = Cookies.get('csrftoken');
+    function csrfSafeMethod(method) {
+      // these HTTP methods do not require CSRF protection
+      return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+    }
+    $.ajaxSetup({
+      beforeSend: function(xhr, settings) {
+        if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+          xhr.setRequestHeader("X-CSRFToken", csrftoken);
+        }
+      }
+    });
+
+    $(document).ready(function(){
+      {% block domready %}
+      {% endblock %}
+    });
+  </script>
+
+</body>
+</html>

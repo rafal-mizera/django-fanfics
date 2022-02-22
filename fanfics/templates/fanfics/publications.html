@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Najnowsze{% endblock %}
+
+{% block content %}
+    <div class="jumbotron jumbotron-fluid mb-0" style="background-image: url({% static 'fanfics/2108.w023.n001.891B.p1.891.jpg' %}); background-size: cover; min-height: 300px;">
+        </div>
+    </div>
+        {% if tag %}
+                <h2>Posty oznaczone tagiem "{{ tag.name }}"</h2>
+        {% endif %}
+        {% for publication in publications %}
+        <div class="container-fluid p-3 my-3 border">
+            <h1>
+                <a class="text-dark text-decoration-none" href="{{ publication.get_absolute_url }}">{{ publication.title }}</a>
+            </h1>
+                    Tagi:
+                    {% for tag in publication.tags.all %}
+                        <a class="badge badge-pill badge-info text-decoration-none" href="{% url "fanfics:publications_by_tag" tag.slug %}">
+                    {{ tag.name }} </a>
+                    {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <a class="text-muted text-decoration-none" >
+                    Opublikowany {{ publication.created }} przez
+                    <a class="badge badge-pill badge-info text-decoration-none"  href="{% url "fanfics:publications_by_user" name=publication.user  %}"> {{ publication.user }} </a>
+                </p>
+
+                    {{ publication.content|truncatewords:30|linebreaks }}
+        </div>
+        {% endfor %}
+
+
+    {% include "fanfics/pagination.html" with page=publications %}
+
+{% endblock %}

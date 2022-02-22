@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+    {% block title %}Logowanie{% endblock %}
+    {% block content %}
+    <div class="container-fluid p-3 my-3 border">
+        <h1>Logowanie</h1>
+        {% if form.errors %}
+            <p> Nazwa użytkownika lub hasło są nieprawidłowe. Spróbuj ponownie.
+            </p>
+        {% else %}
+            <p>Wypełnij poniższy formularz, aby się zalogować. Jeżeli nie masz jeszcze konta, możesz je utworzyć <a href="{% url "register" %}">tutaj</a>.</p>
+        {% endif %}
+    </div>
+        <div class="container-fluid p-3 my-3 border font-weight-bold">
+            <form action="{% url 'login' %}" method="post">
+                <p>
+                    <label for="{{ form.username.id_for_label }}">Nazwa użytkownika </label>
+                        {{ form.username }}
+                </p>
+                <p>
+                    <label for="{{ form.password.id_for_label }}">Hasło </label>
+                        {{ form.password }}
+                </p>
+                {% csrf_token %}
+                <input type="hidden" name="next" value="{{ "/fanfics/home/" }}" />
+                <p><input type="submit" class="btn btn-primary" value="Zaloguj"></p>
+            </form>
+        </div>
+
+        <div style="padding-bottom: 50px"></div>
+        {% endblock %}

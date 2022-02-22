@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Fanfics{% endblock %}
+
+{% block content %}
+
+<div class="row">
+
+    <div class ="col-6"><h1 class="display-3"> Witaj na stronie Fanfics </h1>
+        <div class="container-fluid p-3 my-3 border">
+            <h4>Jest to strona pozwalająca dzielić się twórczością typu fanfiction. Dodawaj nowe publikacje a także czytaj twórczość innych użytkowników. Miłej zabawy!</h4>
+        </div>
+            <img src= {% static 'fanfics/fairy-tale-ga313b1a65_640.jpg' %} class="rounded">
+    </div>
+    <div class ="col-6">
+        <div class="container-fluid p-3 my-3 border">
+            <h1>  Najpopularniejsze tagi  </h1>
+        </div>
+            {% for k,v in tags.items %}
+                {% if v >= 5  %}
+                    <h1 class="display-1 "> <a class="text-decoration-none text-dark" href="{% url "fanfics:publications_by_tag" k %}"> {{ k }}  </a> </h1>
+                {% elif v >= 3 and v < 5 %}
+                    <h1 class="display-3 "> <a class="text-decoration-none text-dark" href="{% url "fanfics:publications_by_tag" k %}"> {{ k }}  </a> </h1>
+                {% elif v >= 1 and v < 3  %}
+                    <h1 class="display-4"> <a class="text-decoration-none text-dark" href="{% url "fanfics:publications_by_tag" k %}"> {{ k }}  </a> </h1>
+                {% endif %}
+
+            {% endfor %}
+    </div>
+</div>
+
+{% endblock %}
