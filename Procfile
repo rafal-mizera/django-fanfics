@@ -1,1 +1,1 @@
-web: gunicorn django-fanfics.wsgi --log-file -
+web: gunicorn mysite.wsgi --log-file -
